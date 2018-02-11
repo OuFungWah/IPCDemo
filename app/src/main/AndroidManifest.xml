@@ -3,6 +3,7 @@
     package="com.example.ofw.ipcdemo">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,6 +23,17 @@
         <activity
             android:name=".SecondActivity"
             android:process=":one" />
+        <activity android:name=".mediaplayer.activity.MediaPlayerMainActivity" />
+        <activity android:name=".mediaplayer.activity.MediaPlayerSimpleActivity" />
+        <activity android:name=".mediaplayer.activity.MediaPlayerUriActivity" />
+        <activity android:name=".mediaplayer.activity.MediaPlayerServiceActivity" />
+
+        <service android:name=".mediaplayer.service.OnlineMusicPlayService" />
     </application>
+
+    <!--多媒体播放器常用的屏幕锁定权限-->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 </manifest>
