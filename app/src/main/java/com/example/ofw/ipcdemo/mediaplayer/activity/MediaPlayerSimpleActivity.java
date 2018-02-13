@@ -18,7 +18,7 @@ public class MediaPlayerSimpleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mediaplayer_activity_simple);
 
-        //注意：如此做法，已进入Activity即播放音乐，并且除了把App关闭没有其他方法停止播放
+        //创建进入准备态的 MediaPlayer 对象，并直接绑定本地资源
         MediaPlayer mediaPlayer = MediaPlayer.create(this,R.raw.always);
         //因为是直接使用Create方法，所以无需调用prepare();
         mediaPlayer.start();
