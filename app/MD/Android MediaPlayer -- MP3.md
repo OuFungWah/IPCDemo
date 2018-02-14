@@ -74,7 +74,7 @@ MediaPlayer 对象调用 [start()](https://developer.android.com/reference/andro
 * 为了重置进入错误态的 MediaPlayer ，我们可以调用 [reset()](https://developer.android.com/reference/android/media/MediaPlayer.html#reset()) 使错误态的 MediaPlayer 进入初始态
 * 为了应用可以有更好的用户体验，建议注册 OnErrorListener 来应对 MediaPlayer 出现错误的情况
 
-## 二、`MediaPlayer`的简单使用
+## 二、`MediaPlayer`对象的简单创建
 最简单的操作应该就是想都不想直接播放就好了,如何实现呢
 ### 1、在 res 资源文件夹中创建 raw文件夹并把多媒体文件(音频或视频)放入
 ![raw文件夹](http://www.crazywah.com/md/android/picture/mp3_in_raw.png)
@@ -97,4 +97,131 @@ public class MediaPlayerSimpleActivity extends AppCompatActivity {
 }
 
 ````
-## 三、`MediaPlayer`
+## 三、`MediaPlayer`对象的常规使用
+### 1、创建一个 MediaPlayer 对象
+```java
+    
+    //通过new关键字获得一个新的对象
+    MediaPlayer mediaPlayer = new MediaPlayer();
+
+```
+### 2、设置多媒体文件的类型
+```java
+    //设置解压的多媒体类型
+    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+```
+### 3、设置音频文件资源
+#### 1）设置本地资源
+前提是先将音频文件放入raw资源文件夹
+```java
+    //解析本地资源的Uri
+    Uri localUri = Uri.parse(String.format("android.resource://%s/%s/%s",this.getPackageName(),"raw","always"));
+    //调用setDataSource()方法设置本地资源Uri
+    mediaPlayer.setDataSource(getApplicationContext(), localUri);
+```
+#### 2)设置网络资源
+```java
+    //定义好音频文件的完整网络位置
+    String url = "http://other.web.rd01.sycdn.kuwo.cn/resource/n3/51/79/3854763359.mp3";
+    //调用setDataSource()方法设置网络资源Url
+    mediaPlayer.setDataSource(url);
+```
+### 4、进入准备态
+```java
+    //给mediaPlayer设置准备完毕监听器
+    mediaPlayer.setOnPreparedListener(new OnPreparedListener(){
+        @Override
+            public void onPrepared(MediaPlayer mp) {
+                //此处为准备完毕时执行的操作
+            }
+    });
+    //在播放前需要让mediaPlayer进入准备态，异步准备
+    mediaPlayer.prepareAsync()
+```
+### 5、播放
+当MediaPlayer进入了准备态时即可开始播放了
+```java
+
+    //调用start()方法开始播放
+    mediaPlayer.start();
+
+```
+### 6、其他操作
+在必要的时候可以在适当的地方调用 pause()、stoped()等方法来对该播放过程进行控制，但是要注意MediaPlayer的状态转换。
+
+## 4、播放进度控制
+我们可以通过 seekTo() 方法来达到调整播放进度的目的，准备态，播放态，暂停态，停止态和完成态都可以执行该方法。
+* 因为 seekTo() 方法是异步的方法，所以存在一个可能性就是 seekTo() 方法在调用后进度依旧没有调整完成。
+为了避免出现逻辑错误，最好的解决方法就是注册一个 OnSeekCompeteListener 监听器，以确保在 seekTo() 方法完成以后才执行需要的操作。
+* 可以通过 getCurrentPosition() 方法获取当前播放进度
+### SeekBar 和 seekTo() 配合使用
+使用SeekBar组件来实现最简单的进度调整是最适合的
+```java
+
+public class MainActivity extends android.support.v7.app.AppCompatActivity implements OnPreparedListener ,OnSeekCompleteListener{
+    
+    //进度条对象
+    private SeekBar seekBar;
+    //多媒体播放对象
+    private MediaPlayer mediaPlayer;
+    
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.id.main_activity);
+    
+        //初始化对象
+        seekBar = findViewById(R.id.seekbar);
+        mediaPlayer = new MediaPlayer();
+        
+        //设置播放器准备态监听器
+        mediaPlayer.setOnPreparedListener(this);
+        //设置播放器进度调整监听器
+        mediaPlayer.setOnSeekCompleteListener(this);
+        //设置进度条变化监听器
+        seekBar.setOnSeekBarChangeListener(this);
+        
+        //设置多媒体播放类型为MP3
+        mediaPlayer.setAudioStreamType(AudioManager.STEAM_MUSIC);
+        //调用异步准备方法
+        mediaPlayer.prepareAsync();
+        
+        
+    }
+        
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        //当多媒体播放器准备完成以后设置进度条的上限值
+        seekBar.setMax(mp.getCurrentPosition());
+        //准备完成以后立即播放
+        mediaPlayer.start();
+    }
+    
+    @Override
+    public void onSeekComplete(MediaPlayer mp){
+        //进度调整完成时的操作
+        Toast.makeText(this, "当前进度为:"+mp.getCurrentPosition()/1000+"s", Toast.LENGTH_SHORT).show();
+    }
+    
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        //如果进度条的变化是来自用户的就执行进度调整的操作
+        if (fromUser) {
+            //调整播放进度
+            mediaPlayer.seekTo(progress);
+        }
+    }
+    
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        
+    }
+    
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    
+    }
+    
+}
+
+```
