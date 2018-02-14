@@ -1,7 +1,7 @@
 # Android MediaPlayer -- mp3
 `Android` 里面给我们提供了一个可以操作多媒体文件（如影像和音乐）的类 --- `MediaPlayer`,为了熟悉当中的操作，我先从Mp3着手来测试了一下
 ## 一、`MediaPlayer`的状态管理
-要使用 MediaPlayer 必须了解其对应的状态管理，否则很容易导致各种异常和错误。如图，这些就是一个多媒体文件播放前后可以经历到的所有状态了
+要使用 MediaPlayer 必须了解其对应的状态管理，否则很容易导致各种异常和错误。如图，这些就是一个多媒体文件播放器前后可以经历到的所有状态了
 ![状态图](https://github.com/OuFungWah/IPCDemo/blob/master/app/MD/mediaplayer_state_diagram.png)
 
 ### 1、Idle（空闲态）
