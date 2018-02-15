@@ -1,5 +1,5 @@
 # Android MediaPlayer -- mp3
-`Android` 里面提供了给我们一个可以操作多媒体文件（如影像和音乐）的类 --- `MediaPlayer`,为了熟悉当中的操作，我先从Mp3着手来测试了一下
+`Android` 里面给我们提供了一个可以操作多媒体文件（如影像和音乐）的类 --- `MediaPlayer`,为了熟悉当中的操作，我先从Mp3着手来测试了一下
 ## 一、`MediaPlayer`的状态管理
 要使用 MediaPlayer 必须了解其对应的状态管理，否则很容易导致各种异常和错误。如图，这些就是一个多媒体文件播放前后可以经历到的所有状态了
 ![状态图](https://github.com/OuFungWah/IPCDemo/blob/master/app/MD/mediaplayer_state_diagram.png)
@@ -26,9 +26,9 @@
 * 注意事项2：由create()得来的MediaPlayer对象直接就处于 Prepared state(准备态)
 
 ### 2、Initialized(初始态)
-处于 Idle state(空闲态)的 MediaPlayer 经过调用 [setDataSource()](https://developer.android.com/reference/android/media/MediaPlayer.html#setDataSource(java.lang.String)) (也包括其他重载的 setDataSource 方法，此处为举例) 后即进入 Initialized state(初始态)
-* 在除了在 Idle state(空闲态)以外的状态都不允许调用 [setDataSource()](https://developer.android.com/reference/android/media/MediaPlayer.html#setDataSource(java.lang.String)) 方法
-* 在调用 [setDataSource()](https://developer.android.com/reference/android/media/MediaPlayer.html#setDataSource(java.lang.String)) 方法的时候记得捕获 IOException，减少程序崩溃的情况。
+处于 Idle state(空闲态)的 MediaPlayer 经过调用 [setDataSource(String path)](https://developer.android.com/reference/android/media/MediaPlayer.html#setDataSource(java.lang.String)) (也包括其他重载的 setDataSource 方法，此处为举例) 后即进入 Initialized state(初始态)
+* 在除了 Idle state(空闲态)以外的状态都不允许调用 [setDataSource()](https://developer.android.com/reference/android/media/MediaPlayer.html#setDataSource(java.lang.String)) 方法
+* 在调用 [setDataSource()](https://developer.android.com/reference/android/media/MediaPlayer.html#setDataSource(java.lang.String)) 方法的时候需要注意捕获 IOException，减少程序崩溃的情况。
 
 ### 3、Preparing(准备中)
 Preparing state(准备中)是一个短暂的中间态，所有 MediaPlayer 的操作方法都不可以在此状态中调用
@@ -37,7 +37,8 @@ Preparing state(准备中)是一个短暂的中间态，所有 MediaPlayer 的�
 MediaPlayer 必须先进入 Prepared state(准备态)才可以播放
 * 进入 Prepared state(准备态)有以下两种方法
     * [prepare()](https://developer.android.com/reference/android/media/MediaPlayer.html#prepare()) (同步准备)
-        调用后，当此方法执行完时，对应的 MediaPlayer 对象将变成 Prepared state(准备态)。在这之前还是它原来的状态。
+        调用后，当此方法执行完时，对应的 MediaPlayer 对象将变成 Prepared state(准备态)。在这之前还是它原来的状态。<br/>
+        **注意：如果要在主线程中调用此方法需要慎重处理，以免准备时间过长带来负面影响**
     * [prepareAsync()](https://developer.android.com/reference/android/media/MediaPlayer.html#prepareAsync()) (异步准备)
         调用后，MediaPlayer对象立即进入 Preparing state(准备中态)，当 [prepareAsync()](https://developer.android.com/reference/android/media/MediaPlayer.html#prepareAsync()) 方法完成时，MediaPlayer 对象的状态再更新为 Prepared state(准备态)
 * 当 MediaPlayer 对象进入 Prepared state(准备态),对应的多媒体文件的参数如(声音大小，循环等)都可以设置
